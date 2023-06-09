@@ -38,6 +38,8 @@ services:
 # -----------------------------------------
   websocket:
     container_name: websocket
+    environment:
+    - FINNHUB_API_KEY=${FINNHUB_API_KEY}
     build:
       context: /python
       dockerfile: Dockerfile
@@ -67,8 +69,6 @@ services:
 # -----------------------------------------
   pyspark:
     container_name: pyspark
-    environment:
-    - FINNHUB_API_KEY=${FINNHUB_API_KEY}
     build:
       context: /spark
       dockerfile: Dockerfile
