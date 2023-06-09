@@ -87,6 +87,20 @@ services:
     build:
       context: /cassandra
       dockerfile: Dockerfile
+
+# -----------------------------------------  
+  cassandra-webui:
+    image: ${CASSANDRA_WEBUI_IMAGE}
+    environment:
+      HOST_PORT: ":80"
+      READ_ONLY: False
+      CASSANDRA_HOST: cassandra
+      CASSANDRA_PORT: 9042
+      CASSANDRA_USERNAME: "cassandra"
+      CASSANDRA_PASSWORD: "cassandra"
+    depends_on:
+      - cassandra
+
 # -----------------------------------------  
   spark-master:
     image: ${SPARK_IMAGE}
