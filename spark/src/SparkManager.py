@@ -3,6 +3,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.avro.functions import from_avro
+import uuid
+import time
 
 class SparkManager:
     def __init__(self, master_url, app_name, bootstrap_servers, topic, schema_path) -> None:
@@ -17,11 +19,16 @@ class SparkManager:
             .config("spark.driver.bindAddress","0.0.0.0") \
             .getOrCreate()
         self.schema = self.get_avro_schema()
+        self.uuid_gen = udf(lambda : str(uuid.uuid4()),StringType())
         
     def get_avro_schema(self):
         with open(self.schema_path) as f:
             schema = f.read()
         return schema
+    
+    def get_current_time(self):
+        print(str(int(time.time())))
+        return time.time()
 
     def test_data(self):
         data = [('James','','Smith','1991-04-01','M',3000),
@@ -47,9 +54,21 @@ class SparkManager:
                 .withColumn("avroData",from_avro(col("value"), self.schema)) \
                 .select("avroData.*") \
                 .select(explode("data"),"type") \
-                .select("col.*")
+                .select("col.*") \
+                .withColumn("id",self.uuid_gen())
         
-        query = df_transformed \
+        df_cleaned = df_transformed \
+                    .withColumnRenamed("c","conditions") \
+                    .withColumnRenamed("p","last_price") \
+                    .withColumnRenamed("s","symbol") \
+                    .withColumnRenamed("v","volume") \
+                    .withColumnRenamed("t","trade_timestamp") \
+                    .withColumn("trade_timestamp",(col("trade_timestamp") / 1000).cast("timestamp")) \
+                    .withColumn("ingest_timestamp",to_timestamp(current_timestamp())) \
+                    .select("id","conditions","last_price","symbol","volume","trade_timestamp","ingest_timestamp")
+                
+        
+        query = df_cleaned \
                 .writeStream \
                 .format("console") \
                 .outputMode("append") \
