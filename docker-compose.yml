@@ -38,7 +38,9 @@ services:
 # -----------------------------------------
   websocket:
     container_name: websocket
-    image: websocket
+    build:
+      context: /spark
+      dockerfile: Dockerfile
     depends_on:
       - kafka
       - kafdrop
