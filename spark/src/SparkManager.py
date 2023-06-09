@@ -17,62 +17,6 @@ class SparkManager:
             .config("spark.driver.bindAddress","0.0.0.0") \
             .getOrCreate()
         self.schema = self.get_avro_schema()
-
-        self.schema_test = '''{
-                            "type" : "record",
-                            "name" : "message",
-                            "namespace" : "TradeMessages",
-                            "fields" : [ {
-                              "name" : "data",
-                              "type" : {
-                                "type" : "array",
-                                "items" : {
-                                  "type" : "record",
-                                  "name" : "data",
-                                  "fields" : [ {
-                                    "name" : "c",
-                                    "type":[
-                                      {
-                                        "type":"array",
-                                        "items":["null","string"],
-                                        "default":[]
-                                      },
-                                      "null"
-                                    ],
-                                    "doc" : "Message Type"
-                                  }, 
-                                  {
-                                    "name" : "p",
-                                    "type" : "double",
-                                    "doc" : "Trade pricee"
-                                  }, 
-                                  {
-                                    "name" : "s",
-                                    "type" : "string",
-                                    "doc" : "Ticker symbol"
-                                  }, 
-                                  {
-                                    "name" : "t",
-                                    "type" : "long",
-                                    "doc" : "Trade timestamp"
-                                  }, 
-                                  {
-                                    "name" : "v",
-                                    "type" : "double",
-                                    "doc" : "Volume of trade"
-                                  } ]
-                                },
-                                "doc" : "Trades messages"
-                              },
-                              "doc"  : "Contains trade details"
-                            }, 
-                            {
-                              "name" : "type",
-                              "type" : "string",
-                              "doc"  : "Type of message"
-                            } ],
-                            "doc" : "Finnhub messages schema"
-                          }'''
         
     def get_avro_schema(self):
         with open(self.schema_path) as f:
@@ -102,7 +46,8 @@ class SparkManager:
         df_transformed = df \
                 .withColumn("avroData",from_avro(col("value"), self.schema)) \
                 .select("avroData.*") \
-                .select(explode("data"),"type")
+                .select(explode("data"),"type") \
+                .select("col.*")
         
         query = df_transformed \
                 .writeStream \
