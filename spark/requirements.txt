@@ -1,0 +1,5 @@
+confluent-kafka==2.1.1
+fastavro==1.7.4
+py4j==0.10.9.7
+pyspark==3.4.0
+rel==0.4.9
