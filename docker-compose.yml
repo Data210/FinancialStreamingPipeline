@@ -67,6 +67,8 @@ services:
 # -----------------------------------------
   pyspark:
     container_name: pyspark
+    environment:
+    - FINNHUB_API_KEY=${FINNHUB_API_KEY}
     build:
       context: /spark
       dockerfile: Dockerfile
