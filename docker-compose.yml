@@ -59,7 +59,7 @@ services:
       kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --create --if-not-exists --topic ${KAFKA_DEFAULT_TOPIC} --replication-factor ${REPLICATION_FACTOR_DEFAULT} --partitions ${PARTITIONS_DEFAULT}
+      kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --create --if-not-exists --topic ${KAFKA_TOPIC_DEFAULT} --replication-factor ${REPLICATION_FACTOR_DEFAULT} --partitions ${PARTITIONS_DEFAULT}
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --list
