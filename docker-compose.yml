@@ -43,6 +43,7 @@ services:
     build:
       context: /python
       dockerfile: Dockerfile
+    image: fin_websocket:tag
     depends_on:
       - kafka
       - kafdrop
@@ -73,7 +74,7 @@ services:
     build:
       context: /spark
       dockerfile: Dockerfile
-      no_cache: true
+    image: fin_pyspark:tag
     ports:
       - ${PYSPARK_CLIENT_PORTS}
     depends_on:
@@ -92,6 +93,7 @@ services:
     build:
       context: /cassandra
       dockerfile: Dockerfile
+    image: fin_cassandra:tag
 
 # -----------------------------------------  
   cassandra-webui:

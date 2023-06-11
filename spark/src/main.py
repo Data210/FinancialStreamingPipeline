@@ -1,5 +1,4 @@
 from SparkManager import SparkManager
-from TopicConsumer import TopicConsumer
 import time
 import os
 
@@ -8,6 +7,7 @@ os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
 def main():
     time.sleep(15)
+    print('hola')
     sm = SparkManager("spark://spark-master:7077",'test_app',bootstrap_servers='kafka:29092',topic='trades',schema_path='Trade.avsc')
     df = sm.create_df()
     sm.cassandra_write_query(df)
