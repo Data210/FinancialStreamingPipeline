@@ -46,6 +46,7 @@ services:
     depends_on:
       - kafka
       - kafdrop
+      - init-kafka
     ports:
       - ${WEBSOCKET_PORTS}
 # -----------------------------------------
@@ -75,6 +76,10 @@ services:
       no_cache: true
     ports:
       - ${PYSPARK_CLIENT_PORTS}
+    depends_on:
+      - spark-master
+      - cassandra
+      - init-kafka
 # -----------------------------------------
   cassandra:
     container_name: cassandra

@@ -17,9 +17,13 @@ class SparkManager:
             .appName(self.app_name) \
             .master(self.master_url) \
             .config("spark.driver.bindAddress","0.0.0.0") \
+            .config("spark.cassandra.connection.host","cassandra") \
+            .config("spark.cassandra.connection.port","9042") \
+            .config("spark.cassandra.auth.username","cassandra")\
+            .config("spark.cassandra.auth.password","cassandra")\
             .getOrCreate()
         self.schema = self.get_avro_schema()
-        self.uuid_gen = udf(lambda : str(uuid.uuid4()),StringType())
+        self.uuid_generator = udf(lambda : str(uuid.uuid4()),StringType())
         
     def get_avro_schema(self):
         with open(self.schema_path) as f:
@@ -30,19 +34,14 @@ class SparkManager:
         print(str(int(time.time())))
         return time.time()
 
-    def test_data(self):
-        data = [('James','','Smith','1991-04-01','M',3000),
-          ('Michael','Rose','','2000-05-19','M',4000),
-          ('Robert','','Williams','1978-09-05','M',4000),
-          ('Maria','Anne','Jones','1967-12-01','F',4000),
-          ('Jen','Mary','Brown','1980-02-17','F',-1)
-        ]
+    def save_to_cassandra(self, batch_df, batch_id):
+          batch_df.write.format("org.apache.spark.sql.cassandra")\
+          .option("keyspace", "market")\
+          .option("table", "trades")\
+          .mode("append")\
+          .save()
 
-        columns = ["firstname","middlename","lastname","dob","gender","salary"]
-        df = self.session.createDataFrame(data=data, schema=columns)
-        df.show()
-
-    def create_df(self):  
+    def create_df(self):
         df = self.session\
             .readStream \
             .format("kafka") \
@@ -55,23 +54,31 @@ class SparkManager:
                 .select("avroData.*") \
                 .select(explode("data"),"type") \
                 .select("col.*") \
-                .withColumn("id",self.uuid_gen())
+                .withColumn("uuid",self.uuid_generator())
         
         df_cleaned = df_transformed \
-                    .withColumnRenamed("c","conditions") \
-                    .withColumnRenamed("p","last_price") \
+                    .withColumnRenamed("c","trade_conditions") \
+                    .withColumnRenamed("p","price") \
                     .withColumnRenamed("s","symbol") \
                     .withColumnRenamed("v","volume") \
                     .withColumnRenamed("t","trade_timestamp") \
                     .withColumn("trade_timestamp",(col("trade_timestamp") / 1000).cast("timestamp")) \
                     .withColumn("ingest_timestamp",to_timestamp(current_timestamp())) \
-                    .select("id","conditions","last_price","symbol","volume","trade_timestamp","ingest_timestamp")
-                
+                    .select("symbol","trade_timestamp","ingest_timestamp","price","trade_conditions","uuid","volume")
         
-        query = df_cleaned \
+        return df_cleaned
+    
+    def cassandra_write_query(self, df):        
+        logging_query = df \
                 .writeStream \
                 .format("console") \
                 .outputMode("append") \
                 .start()
-
-        query.awaitTermination()
+        
+        cassandra_query = df \
+                .writeStream \
+                .foreachBatch(self.save_to_cassandra) \
+                .outputMode("update") \
+                .start()
+ 
+        self.session.streams.awaitAnyTermination()
