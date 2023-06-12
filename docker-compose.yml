@@ -94,7 +94,6 @@ services:
       context: /cassandra
       dockerfile: Dockerfile
     image: fin_cassandra:tag
-
 # -----------------------------------------  
   cassandra-webui:
     image: ${CASSANDRA_WEBUI_IMAGE}
@@ -107,7 +106,15 @@ services:
       CASSANDRA_PASSWORD: "cassandra"
     depends_on:
       - cassandra
-
+# -----------------------------------------  
+  presto:
+    container_name: presto
+    ports:
+      - ${PRESTO_PORTS}
+    build:
+      context: /presto
+      dockerfile: Dockerfile
+    image: fin_presto:tag
 # -----------------------------------------  
   spark-master:
     image: ${SPARK_IMAGE}
