@@ -43,9 +43,11 @@ services:
     build:
       context: /python
       dockerfile: Dockerfile
+    image: fin_websocket:tag
     depends_on:
       - kafka
       - kafdrop
+      - init-kafka
     ports:
       - ${WEBSOCKET_PORTS}
 # -----------------------------------------
@@ -72,9 +74,40 @@ services:
     build:
       context: /spark
       dockerfile: Dockerfile
-      no_cache: true
+    image: fin_pyspark:tag
     ports:
       - ${PYSPARK_CLIENT_PORTS}
+    depends_on:
+      - spark-master
+      - cassandra
+      - init-kafka
+# -----------------------------------------
+  cassandra:
+    container_name: cassandra
+    ports:
+      - ${CASSANDRA_PORTS}
+    # command: |
+    #   "
+    #   /bin/sh -c cqlsh
+    #   "
+    build:
+      context: /cassandra
+      dockerfile: Dockerfile
+    image: fin_cassandra:tag
+
+# -----------------------------------------  
+  cassandra-webui:
+    image: ${CASSANDRA_WEBUI_IMAGE}
+    environment:
+      HOST_PORT: ":80"
+      READ_ONLY: False
+      CASSANDRA_HOST: cassandra
+      CASSANDRA_PORT: 9042
+      CASSANDRA_USERNAME: "cassandra"
+      CASSANDRA_PASSWORD: "cassandra"
+    depends_on:
+      - cassandra
+
 # -----------------------------------------  
   spark-master:
     image: ${SPARK_IMAGE}
@@ -107,33 +140,6 @@ services:
       - spark-master
 
 # -----------------------------------------
-  cassandra:
-    container_name: cassandra
-    networks:
-      default:
-        ipv4_address: 10.6.0.11
-    ports:
-      - ${CASSANDRA_PORTS}
-    # command: |
-    #   "
-    #   /bin/sh -c cqlsh
-    #   "
-    build:
-      context: /cassandra
-      dockerfile: Dockerfile
-
-# -----------------------------------------  
-  cassandra-webui:
-    image: ${CASSANDRA_WEBUI_IMAGE}
-    ports:
-      - 3000:3000
-    environment:
-      CASSANDRA_HOST_IPS: 10.6.0.11
-      CASSANDRA_PORT: 9042
-      CASSANDRA_USERNAME: "cassandra"
-      CASSANDRA_PASSWORD: "cassandra"
-    depends_on:
-      - cassandra
   grafana:
     ports:
     - 3000:3000
