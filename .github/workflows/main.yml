@@ -5,5 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Pull superset
+        run: git clone https://github.com/apache/superset.git
       - name: Build the stack
         run: docker-compose up -d
