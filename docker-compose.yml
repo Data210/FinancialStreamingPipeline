@@ -94,7 +94,7 @@ services:
     - .env
     container_name: pyspark
     build:
-      context: /spark
+      context: ./spark
       dockerfile: Dockerfile
     image: fin_pyspark:tag
     restart: unless-stopped
@@ -116,7 +116,7 @@ services:
     #   /bin/sh -c cqlsh
     #   "
     build:
-      context: /cassandra
+      context: ./cassandra
       dockerfile: Dockerfile
     image: fin_cassandra:tag
 # -----------------------------------------  
@@ -141,7 +141,7 @@ services:
     ports:
       - ${PRESTO_PORTS}
     build:
-      context: /presto
+      context: ./presto
       dockerfile: Dockerfile
     image: fin_presto:tag
 # -----------------------------------------  
@@ -245,7 +245,7 @@ services:
     ports:
     - 3000:3000
     build:
-      context: /grafana
+      context: ./grafana
       dockerfile: Dockerfile
 
 networks:
