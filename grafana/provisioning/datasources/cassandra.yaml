@@ -3,18 +3,18 @@ apiVersion: 1
 
 # list of datasources that should be deleted from the database
 deleteDatasources:
-  - name: Apache Cassandra-1
+  - name: Cassandra
     orgId: 1
 
 # list of datasources to insert/update depending
 # what's available in the database
 datasources:
   # <string, required> name of the datasource. Required
-  - name: Apache Cassandra-1
+  - name: Cassandra
     # <string, required> datasource type. Required
     type: hadesarchitect-cassandra-datasource
     # <string, required> access mode. proxy or direct (Server or Browser in the UI). Required
-    access: direct
+    access: proxy
     # <int> org id. will default to orgId 1 if not specified
     orgId: 1
     # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
@@ -23,8 +23,7 @@ datasources:
     url: cassandra:9042
     # <string> database user, if used
     user: cassandra
-    # <string> database name, if used
-    user: cassandra
+
     database: 
     # <bool> enable/disable basic auth
     basicAuth: true
