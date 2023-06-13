@@ -10,7 +10,7 @@ jobs:
       - name: Build the stack
         env:
           FINNHUB_API_KEY: ${{secrets.FINNHUB_API_KEY}}
-          ZOOKEEPER_IMAGE: ${{.ZOOKEEPER_IMAGE}}
+          ZOOKEEPER_IMAGE: ${{variables.ZOOKEEPER_IMAGE}}
           ZOOKEEPER_PORTS: ${{ZOOKEEPER_PORTS}}
           ZOOKEEPER_CLIENT_PORT: ${{ZOOKEEPER_CLIENT_PORT}}
           ZOOKEEPER_TICK_TIME: ${{ZOOKEEPER_TICK_TIME}}
