@@ -56,4 +56,6 @@ jobs:
           SUPERSET_SECRET_KEY: ${{secrets.SUPERSET_SECRET_KEY}}
           CYPRESS_CONFIG: ${{vars.CYPRESS_CONFIG}}
           SUPERSET_PORT: ${{vars.SUPERSET_PORT}}
-        run: docker-compose up -d
+        with:
+          context: .
+          run: docker-compose up -d
