@@ -126,7 +126,7 @@ services:
     image: ${CASSANDRA_WEBUI_IMAGE}
     environment:
       HOST_PORT: ":80"
-      READ_ONLY: false
+      READ_ONLY: "false"
       CASSANDRA_HOST: cassandra
       CASSANDRA_PORT: 9042
       CASSANDRA_USERNAME: "cassandra"
