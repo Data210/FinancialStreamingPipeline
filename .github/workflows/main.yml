@@ -7,6 +7,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Pull superset
         run: git clone https://github.com/apache/superset.git
+      - name: create .env
+        run: touch .env
       - name: Build the stack
         env:
           FINNHUB_API_KEY: ${{secrets.FINNHUB_API_KEY}}
