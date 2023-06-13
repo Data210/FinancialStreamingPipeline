@@ -61,6 +61,7 @@ services:
       context: /python
       dockerfile: Dockerfile
     image: fin_websocket:tag
+    restart: unless-stopped
     depends_on:
       - kafka
       - kafdrop
@@ -96,6 +97,7 @@ services:
       context: /spark
       dockerfile: Dockerfile
     image: fin_pyspark:tag
+    restart: unless-stopped
     ports:
       - ${PYSPARK_CLIENT_PORTS}
     depends_on:
