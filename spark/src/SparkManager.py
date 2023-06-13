@@ -68,17 +68,18 @@ class SparkManager:
         
         return df_cleaned
     
-    def cassandra_write_query(self, df):        
-        logging_query = df \
+    def cassandra_write_query(self, df): 
+        logging_writer = df \
                 .writeStream \
                 .format("console") \
-                .outputMode("append") \
-                .start()
-        
-        cassandra_query = df \
+                .outputMode("append")
+
+        cassandra_writer = df \
                 .writeStream \
                 .foreachBatch(self.save_to_cassandra) \
-                .outputMode("update") \
-                .start()
- 
+                .outputMode("update")
+
+        logging_query = logging_writer.start()    
+        cassandra_query = cassandra_writer.start()
+
         self.session.streams.awaitAnyTermination()
