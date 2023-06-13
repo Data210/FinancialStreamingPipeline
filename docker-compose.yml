@@ -176,7 +176,6 @@ services:
       - ${SPARK_WORKER_PORTS}
     depends_on:
       - spark-master
-
   redis:
     image: redis:7
     container_name: superset_cache
@@ -237,7 +236,21 @@ services:
     user: "root"
     volumes: *superset-volumes
     healthcheck:
-      disable: true
+      disable: true     
+  # -----------------------------------------
+  grafana:
+    ports:
+    - 3000:3000
+    build:
+      context: /grafana
+      dockerfile: Dockerfile
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.6.0.0/24
 
 volumes:
   superset_home:
@@ -246,4 +259,3 @@ volumes:
     external: false
   redis:
     external: false
-
