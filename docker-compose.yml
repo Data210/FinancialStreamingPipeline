@@ -1,5 +1,5 @@
----
-x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
+version: '3'
+x-superset-image: &superset-image apache/superset-latest-dev
 x-superset-depends-on: &superset-depends-on
   - db
   - redis
@@ -124,7 +124,7 @@ services:
     image: ${CASSANDRA_WEBUI_IMAGE}
     environment:
       HOST_PORT: ":80"
-      READ_ONLY: False
+      READ_ONLY: 0
       CASSANDRA_HOST: cassandra
       CASSANDRA_PORT: 9042
       CASSANDRA_USERNAME: "cassandra"
