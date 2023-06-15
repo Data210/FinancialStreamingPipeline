@@ -8,9 +8,9 @@ os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 def main():
     time.sleep(15)
     print('hola')
-    sm = SparkManager("spark://spark-master:7077",'test_app',bootstrap_servers='kafka:29092',topic='trades',schema_path='Trade.avsc')
+    sm = SparkManager(f"spark://{os.environ['SPARK_MASTER_HOSTNAME']}:7077",'test_app',bootstrap_servers='kafkabroker:29092',topic='trades',schema_path='Trade.avsc')
     df = sm.create_df()
     sm.cassandra_write_query(df)
-    
+
 if __name__ == '__main__':
     main()
