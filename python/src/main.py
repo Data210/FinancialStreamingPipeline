@@ -8,7 +8,7 @@ def main():
     # print(metadata)
     ticker_client = TickerClient('BINANCE:BTCUSDT')
     print('hello')
-    message_relay = MessageRelay(bootstrap_servers='kafka:29092',topic='trades',schema_path='../Trade.avsc')
+    message_relay = MessageRelay(bootstrap_servers='kafkabroker:29092',topic='trades',schema_path='../Trade.avsc')
     ticker_client.set_receiver(message_relay.dispatch)
 
     rel.signal(2, rel.abort)
