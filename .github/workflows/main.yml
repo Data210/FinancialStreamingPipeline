@@ -1,0 +1,59 @@
+name: Docker Compose Actions Workflow
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Pull superset
+        run: git clone https://github.com/apache/superset.git
+      - name: create .env
+        run: touch .env
+      - name: Build the stack
+        env:
+          FINNHUB_API_KEY: ${{secrets.FINNHUB_API_KEY}}
+          ZOOKEEPER_IMAGE: ${{vars.ZOOKEEPER_IMAGE}}
+          ZOOKEEPER_PORTS: ${{vars.ZOOKEEPER_PORTS}}
+          ZOOKEEPER_CLIENT_PORT: ${{vars.ZOOKEEPER_CLIENT_PORT}}
+          ZOOKEEPER_TICK_TIME: ${{vars.ZOOKEEPER_TICK_TIME}}
+          KAFKA_IMAGE: ${{vars.KAFKA_IMAGE}}
+          KAFKA_PORTS: ${{vars.KAFKA_PORTS}}
+          KAFKA_INTERNAL_PORT: ${{vars.KAFKA_INTERNAL_PORT}}
+          KAFKA_TOPIC_DEFAULT: ${{vars.KAFKA_TOPIC_DEFAULT}}
+          REPLICATION_FACTOR_DEFAULT: ${{vars.REPLICATION_FACTOR_DEFAUL}}
+          PARTITIONS_DEFAULT: ${{vars.PARTITIONS_DEFAULT}}
+          KAFDROP_IMAGE: ${{vars.KAFDROP_IMAGE}}
+          KAFDROP_PORTS: ${{vars.KAFDROP_PORTS}}
+          WEBSOCKET_PORTS: ${{vars.WEBSOCKET_PORTS}}
+          PYSPARK_CLIENT_PORTS: ${{vars.PYSPARK_CLIENT_PORTS}}
+          CASSANDRA_PORTS: ${{vars.CASSANDRA_PORTS}}
+          CASSANDRA_WEBUI_IMAGE: ${{vars.CASSANDRA_WEBUI_IMAGE}}
+          CASSANDRA_WEBUI_PORTS: ${{vars.CASSANDRA_WEBUI_PORTS}}
+          PRESTO_PORTS: ${{vars.PRESTO_PORTS}}
+          SPARK_IMAGE: ${{vars.SPARK_IMAGE}}
+          SPARK_MASTER_PORTS: ${{vars.SPARK_MASTER_PORTS}}
+          SPARK_MASTER_INTERNAL_PORTS: ${{vars.SPARK_MASTER_INTERNAL_PORTS}}
+          SPARK_MASTER_INTERNAL_PORT: ${{vars.SPARK_MASTER_INTERNAL_PORT}}
+          SPARK_WORKER_PORTS: ${{vars.SPARK_WORKER_PORTS}}
+          SPARK_WORKER_CORES: ${{vars.SPARK_WORKER_CORES}}
+          SPARK_WORKER_MEMORY: ${{vars.SPARK_WORKER_MEMORY}}
+          COMPOSE_PROJECT_NAME: ${{vars.COMPOSE_PROJECT_NAME}}
+          DATABASE_DB: ${{vars.DATABASE_DB}}
+          DATABASE_HOST: ${{vars.DATABASE_HOST}}
+          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          DATABASE_USER: ${{vars.DATABASE_USER}}
+          DATABASE_PORT: ${{vars.DATABASE_PORT}}
+          DATABASE_DIALECT: ${{vars.DATABASE_DIALECT}}
+          POSTGRES_DB: ${{vars.POSTGRES_DB}}
+          POSTGRES_USER: ${{vars.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          PYTHONPATH: ${{vars.PYTHONPATH}}
+          REDIS_HOST: ${{vars.REDIS_HOST}}
+          REDIS_PORT: ${{vars.REDIS_PORT}}
+          FLASK_ENV: ${{vars.LASK_ENV}}
+          SUPERSET_ENV: ${{vars.SUPERSET_ENV}}
+          SUPERSET_LOAD_EXAMPLES: ${{vars.SUPERSET_LOAD_EXAMPLES}}
+          SUPERSET_SECRET_KEY: ${{secrets.SUPERSET_SECRET_KEY}}
+          CYPRESS_CONFIG: ${{vars.CYPRESS_CONFIG}}
+          SUPERSET_PORT: ${{vars.SUPERSET_PORT}}
+        run: docker-compose up -d

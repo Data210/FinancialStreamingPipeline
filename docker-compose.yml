@@ -1,13 +1,12 @@
-version: '3'
-x-superset-image: &superset-image apache/superset-latest-dev
-x-superset-depends-on: &superset-depends-on
-  - db
-  - redis
-x-superset-volumes: &superset-volumes
-  # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
-  - ./superset/docker:/app/docker
-  - superset_home:/app/superset_home
-
+# x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
+# x-superset-depends-on: &superset-depends-on
+#   - db
+#   - redis
+# x-superset-volumes: &superset-volumes
+#   # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
+#   - ./superset/docker:/app/docker
+#   - superset_home:/app/superset_home
+version: '2'
 services:
 # -----------------------------------------
   zookeeper:
@@ -21,7 +20,7 @@ services:
       ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
     container_name: sn-zookeeper
 # -----------------------------------------
-  kafka:
+  kafkabroker:
     env_file:
     - .env
     image: ${KAFKA_IMAGE}
@@ -33,7 +32,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_CLIENT_PORT}
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:${KAFKA_INTERNAL_PORT},PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafkabroker:${KAFKA_INTERNAL_PORT},PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -45,9 +44,9 @@ services:
     container_name: kafdrop
     image: ${KAFDROP_IMAGE}
     depends_on:
-      - kafka
+      - kafkabroker
     environment:
-      KAFKA_BROKERCONNECT: kafka:${KAFKA_INTERNAL_PORT}
+      KAFKA_BROKERCONNECT: kafkabroker:${KAFKA_INTERNAL_PORT}
     ports:
       - ${KAFDROP_PORTS}
 # -----------------------------------------
@@ -58,11 +57,12 @@ services:
     environment:
     - FINNHUB_API_KEY=${FINNHUB_API_KEY}
     build:
-      context: /python
+      context: ./python
       dockerfile: Dockerfile
     image: fin_websocket:tag
+    restart: unless-stopped
     depends_on:
-      - kafka
+      - kafkabroker
       - kafdrop
       - init-kafka
     ports:
@@ -74,18 +74,18 @@ services:
     container_name: init_kafka
     image: ${KAFKA_IMAGE}
     depends_on:
-      - kafka
+      - kafkabroker
     entrypoint: [ '/bin/sh', '-c' ]
     command: |
       "
       # blocks until kafka is reachable
-      kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --list
+      kafka-topics --bootstrap-server kafkabroker:${KAFKA_INTERNAL_PORT} --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --create --if-not-exists --topic ${KAFKA_TOPIC_DEFAULT} --replication-factor ${REPLICATION_FACTOR_DEFAULT} --partitions ${PARTITIONS_DEFAULT}
+      kafka-topics --bootstrap-server kafkabroker:${KAFKA_INTERNAL_PORT} --create --if-not-exists --topic ${KAFKA_TOPIC_DEFAULT} --replication-factor ${REPLICATION_FACTOR_DEFAULT} --partitions ${PARTITIONS_DEFAULT}
 
       echo -e 'Successfully created the following topics:'
-      kafka-topics --bootstrap-server kafka:${KAFKA_INTERNAL_PORT} --list
+      kafka-topics --bootstrap-server kafkabroker:${KAFKA_INTERNAL_PORT} --list
       "
 # -----------------------------------------
   pyspark:
@@ -93,9 +93,10 @@ services:
     - .env
     container_name: pyspark
     build:
-      context: /spark
+      context: ./spark
       dockerfile: Dockerfile
     image: fin_pyspark:tag
+    restart: unless-stopped
     ports:
       - ${PYSPARK_CLIENT_PORTS}
     depends_on:
@@ -114,7 +115,7 @@ services:
     #   /bin/sh -c cqlsh
     #   "
     build:
-      context: /cassandra
+      context: ./cassandra
       dockerfile: Dockerfile
     image: fin_cassandra:tag
 # -----------------------------------------  
@@ -124,7 +125,7 @@ services:
     image: ${CASSANDRA_WEBUI_IMAGE}
     environment:
       HOST_PORT: ":80"
-      READ_ONLY: 0
+      READ_ONLY: "false"
       CASSANDRA_HOST: cassandra
       CASSANDRA_PORT: 9042
       CASSANDRA_USERNAME: "cassandra"
@@ -139,7 +140,7 @@ services:
     ports:
       - ${PRESTO_PORTS}
     build:
-      context: /presto
+      context: ./presto
       dockerfile: Dockerfile
     image: fin_presto:tag
 # -----------------------------------------  
@@ -193,48 +194,64 @@ services:
 
   superset:
     env_file: superset/docker/.env-non-dev
-    image: *superset-image
+    image: apache/superset:${TAG:-latest-dev}
     container_name: superset_app
     command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
     user: "root"
     restart: unless-stopped
     ports:
       - 8088:8088
-    depends_on: *superset-depends-on
-    volumes: *superset-volumes
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./superset/docker:/app/docker
+      - superset_home:/app/superset_home
 
   superset-init:
-    image: *superset-image
+    image: apache/superset:${TAG:-latest-dev}
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file: superset/docker/.env-non-dev
-    depends_on: *superset-depends-on
+    depends_on:
+      - db
+      - redis
     user: "root"
-    volumes: *superset-volumes
+    volumes:
+      - ./superset/docker:/app/docker
+      - superset_home:/app/superset_home
     healthcheck:
       disable: true
 
   superset-worker:
-    image: *superset-image
+    image: apache/superset:${TAG:-latest-dev}
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file: superset/docker/.env-non-dev
     restart: unless-stopped
-    depends_on: *superset-depends-on
+    depends_on:
+      - db
+      - redis
     user: "root"
-    volumes: *superset-volumes
+    volumes:
+      - ./superset/docker:/app/docker
+      - superset_home:/app/superset_home
     healthcheck:
       test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
 
   superset-worker-beat:
-    image: *superset-image
+    image: apache/superset:${TAG:-latest-dev}
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file: superset/docker/.env-non-dev
     restart: unless-stopped
-    depends_on: *superset-depends-on
+    depends_on:
+      - db
+      - redis
     user: "root"
-    volumes: *superset-volumes
+    volumes:
+      - ./superset/docker:/app/docker
+      - superset_home:/app/superset_home
     healthcheck:
       disable: true     
   # -----------------------------------------
@@ -243,7 +260,7 @@ services:
     ports:
     - 3000:3000
     build:
-      context: /grafana
+      context: ./grafana
       dockerfile: Dockerfile
 
 networks:

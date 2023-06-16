@@ -1,5 +1,5 @@
 # FROM python:3.9-bullseye
-FROM pyspark_base
+FROM ethanjolly/pyspark_base
 
 # COPY SparkManager.py .
 # COPY TopicConsumer.py .
