@@ -6,14 +6,6 @@ terraform {
   }
 }
 
-# data "external" "env" {
-#     program = ["bash","env.sh"]
-# }
-
-# output "MINIKUBE_CLIENT_CERT" {
-#   value = data.external.env.result["MINIKUBE_CLIENT_CERT"]
-# }
-
 variable "host" {
   type = string
   default = "https://127.0.0.1:51605"
@@ -36,8 +28,13 @@ variable "finnhub_api_key" {
 }
 
 provider "kubernetes" {
-  host = var.host
-  client_certificate     = base64decode(var.client_certificate)
-  client_key             = base64decode(var.client_key)
-  cluster_ca_certificate = base64decode(var.cluster_ca_certificate)
+  load_config_file = "false"
+
+  host     = google_container_cluster.primary.endpoint
+  username = var.gke_username
+  password = var.gke_password
+
+  client_certificate     = google_container_cluster.primary.master_auth.0.client_certificate
+  client_key             = google_container_cluster.primary.master_auth.0.client_key
+  cluster_ca_certificate = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
 }
