@@ -7,6 +7,6 @@ variable "region" {
 
 variable "cluster_name" {
   description = "Name of EKS cluster"
-  type    = string
-  default = "finance-pipeline-eks"
+  type        = string
+  default     = "finance-pipeline-eks"
 }
