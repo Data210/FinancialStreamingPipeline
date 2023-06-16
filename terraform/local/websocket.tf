@@ -6,7 +6,7 @@ resource "kubernetes_deployment" "websocket-app"{
   spec{
     replicas=1
     selector{
-      match_labels{
+      match_labels={
         app="websocket-test"
       }
     }
@@ -17,27 +17,37 @@ resource "kubernetes_deployment" "websocket-app"{
         }
       }
       spec{
-        containers{
+        container{
           name="websocket"
           image="ethanjolly/fin_websocket"
-          env={
+          env{
             name="FINNHUB_API_KEY"
-            value="chup7ppr01qphnn2crmgchup7ppr01qphnn2crn0"
+            value=var.finnhub_api_key
           }
         }
       }
     }
   }
 }
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: websocket-entrypoint
-  namespace: default
-spec:
-  selector:
-    app: websocket-test
-  ports:
-  - port: 8001
-    targetPort: 8001
+
+resource "kubernetes_manifest" "service_websocket_entrypoint" {
+  manifest = {
+    "apiVersion" = "v1"
+    "kind" = "Service"
+    "metadata" = {
+      "name" = "websocket-entrypoint"
+      "namespace" = "default"
+    }
+    "spec" = {
+      "ports" = [
+        {
+          "port" = 8001
+          "targetPort" = 8001
+        },
+      ]
+      "selector" = {
+        "app" = "websocket-test"
+      }
+    }
+  }
+}
