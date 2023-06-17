@@ -41,5 +41,7 @@ pyvenv.cfg
 .venv
 env
 pip-selfcheck.json
+venv
+superset
 
 # End of https://www.toptal.com/developers/gitignore/api/git,dotenv,venv
