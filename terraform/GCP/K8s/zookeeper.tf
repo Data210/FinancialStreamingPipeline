@@ -20,20 +20,20 @@ resource "kubernetes_deployment" "deployment_zookeeper_deploy" {
         container{
             env{
                 name = "ZOOKEEPER_CLIENT_PORT"
-                value = "2181"
+                value = var.ZOOKEEPER_CLIENT_PORT
             }
             env{
                 name = "ZOOKEEPER_TICK_TIME"
-                value = "2000"
+                value = var.ZOOKEEPER_TICK_TIME
             }
             env{
                 name = "ZOOKEEPER_SERVER_1"
-                value = "zookeeper"
+                value = var.ZOOKEEPER_SERVER_1
             }
-            image = "digitalwonderland/zookeeper"
+            image = var.ZOOKEEPER_IMAGE
             name = "zookeeper"
             port{
-                container_port = 2181
+                container_port = var.ZOOKEEPER_CLIENT_PORT
               }
         }
       }
@@ -52,7 +52,7 @@ resource "kubernetes_service" "service_zookeeper" {
   spec{
     port{
         name = "client"
-        port = 2181
+        port = var.ZOOKEEPER_CLIENT_PORT
         protocol = "TCP"
       }
     selector = {

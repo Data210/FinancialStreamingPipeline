@@ -22,11 +22,11 @@ resource "kubernetes_manifest" "deployment_grafana_app" {
         "spec" = {
           "containers" = [
             {
-              "image" = "ethanjolly/fin_grafana"
+              "image" = var.GRAFANA_IMAGE
               "name" = "grafana-app"
               "ports" = [
                 {
-                  "containerPort" = 3000
+                  "containerPort" = var.GRAFANA_PORT
                 },
               ]
             },
@@ -48,9 +48,9 @@ resource "kubernetes_manifest" "service_grafana" {
     "spec" = {
       "ports" = [
         {
-          "nodePort" = 30005
-          "port" = 3000
-          "targetPort" = 3000
+          "nodePort" = var.GRAFANA_NODEPORT
+          "port" = var.GRAFANA_PORT
+          "targetPort" = var.GRAFANA_PORT
         },
       ]
       "selector" = {

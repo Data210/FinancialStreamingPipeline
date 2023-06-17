@@ -22,11 +22,11 @@ resource "kubernetes_manifest" "deployment_cassandra_app" {
         "spec" = {
           "containers" = [
             {
-              "image" = "ethanjolly/fin_cassandra"
+              "image" = var.CASSANDRA_IMAGE
               "name" = "cassandra-app"
               "ports" = [
                 {
-                  "containerPort" = 9042
+                  "containerPort" = var.CASSANDRA_PORT
                 },
               ]
             },
@@ -48,8 +48,8 @@ resource "kubernetes_manifest" "service_cassandra" {
     "spec" = {
       "ports" = [
         {
-          "port" = 9042
-          "targetPort" = 9042
+          "port" = var.CASSANDRA_PORT
+          "targetPort" = var.CASSANDRA_PORT
         },
       ]
       "selector" = {

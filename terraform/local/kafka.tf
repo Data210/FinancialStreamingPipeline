@@ -25,11 +25,11 @@ resource "kubernetes_manifest" "deployment_kafka_app" {
               "env" = [
                 {
                   "name" = "FINNHUB_API_KEY"
-                  "value" = "chup7ppr01qphnn2crmgchup7ppr01qphnn2crn0"
+                  "value" = var.finnhub_api_key
                 },
                 {
                   "name" = "KAFKA_ADVERTISED_PORT"
-                  "value" = "29092"
+                  "value" = var.KAFKA_ADVERTISED_PORT
                 },
                 {
                   "name" = "KAFKA_ADVERTISED_HOST_NAME"
@@ -37,11 +37,11 @@ resource "kubernetes_manifest" "deployment_kafka_app" {
                 },
                 {
                   "name" = "KAFKA_ZOOKEEPER_CONNECT"
-                  "value" = "zookeeper:2181"
+                  "value" = "zookeeper:${var.ZOOKEEPER_CLIENT_PORT}"
                 },
                 {
                   "name" = "KAFKA_BROKER_ID"
-                  "value" = "1"
+                  "value" = var.KAFKA_BROKER_ID
                 },
                 {
                   "name" = "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP"
@@ -49,25 +49,25 @@ resource "kubernetes_manifest" "deployment_kafka_app" {
                 },
                 {
                   "name" = "KAFKA_CREATE_TOPICS"
-                  "value" = "trades:1:1"
+                  "value" = var.KAFKA_CREATE_TOPICS
                 },
                 {
                   "name" = "KAFKA_LISTENERS"
-                  "value" = "PLAINTEXT://kafkabroker:29092,PLAINTEXT_HOST://0.0.0.0:9092"
+                  "value" = "PLAINTEXT://kafkabroker:${var.KAFKA_ADVERTISED_PORT},PLAINTEXT_HOST://0.0.0.0:${var.KAFKA_EXTERNAL_PORT}"
                 },
                 {
                   "name" = "KAFKA_ADVERTISED_LISTENERS"
-                  "value" = "PLAINTEXT://kafkabroker:29092,PLAINTEXT_HOST://localhost:9092"
+                  "value" = "PLAINTEXT://kafkabroker:${var.KAFKA_ADVERTISED_PORT},PLAINTEXT_HOST://localhost:${var.KAFKA_EXTERNAL_PORT}"
                 },
               ]
-              "image" = "wurstmeister/kafka"
+              "image" = var.KAFKA_IMAGE
               "name" = "kafka"
               "ports" = [
                 {
-                  "containerPort" = 9092
+                  "containerPort" = var.KAFKA_EXTERNAL_PORT
                 },
                 {
-                  "containerPort" = 29092
+                  "containerPort" = var.KAFKA_ADVERTISED_PORT
                 },
               ]
             },
@@ -94,9 +94,9 @@ resource "kubernetes_manifest" "service_kafkabroker" {
       "ports" = [
         {
           "name" = "kafka-port-websocket"
-          "port" = 29092
+          "port" = var.KAFKA_ADVERTISED_PORT
           "protocol" = "TCP"
-          "targetPort" = 29092
+          "targetPort" = var.KAFKA_ADVERTISED_PORT
         },
       ]
       "selector" = {

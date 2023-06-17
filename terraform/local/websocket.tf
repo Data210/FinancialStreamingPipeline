@@ -41,8 +41,8 @@ resource "kubernetes_manifest" "service_websocket_entrypoint" {
     "spec" = {
       "ports" = [
         {
-          "port" = 8001
-          "targetPort" = 8001
+          "port" = var.websocket_port
+          "targetPort" = var.websocket_port
         },
       ]
       "selector" = {

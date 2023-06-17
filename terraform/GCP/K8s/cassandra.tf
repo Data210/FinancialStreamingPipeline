@@ -18,10 +18,10 @@ resource "kubernetes_deployment" "deployment_cassandra_app" {
       }
       spec{
         container{
-            image = "ethanjolly/fin_cassandra"
+            image = var.CASSANDRA_IMAGE
             name = "cassandra-app"
             port{
-                container_port = 9042
+                container_port = var.CASSANDRA_PORT
             }
         }
       }
@@ -36,8 +36,8 @@ resource "kubernetes_service" "service_cassandra" {
   }
   spec{
     port{
-        port = 9042
-        target_port = 9042
+        port = var.CASSANDRA_PORT
+        target_port = var.CASSANDRA_PORT
       }
     selector = {
       app = "cassandra-app"

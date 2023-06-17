@@ -20,11 +20,11 @@ resource "kubernetes_deployment" "deployment_kafka_app" {
         container{
             env{
                 name = "FINNHUB_API_KEY"
-                value = "chup7ppr01qphnn2crmgchup7ppr01qphnn2crn0"
+                value = var.finnhub_api_key
             }
             env{
               name = "KAFKA_ADVERTISED_PORT"
-              value = "29092"
+              value = var.KAFKA_ADVERTISED_PORT
             }
             env{
               name = "KAFKA_ADVERTISED_HOST_NAME"
@@ -32,11 +32,11 @@ resource "kubernetes_deployment" "deployment_kafka_app" {
             }
             env{
               name = "KAFKA_ZOOKEEPER_CONNECT"
-              value = "zookeeper:2181"
+              value = "zookeeper:${var.ZOOKEEPER_CLIENT_PORT}"
             }
             env{
               name = "KAFKA_BROKER_ID"
-              value = "1"
+              value = var.KAFKA_BROKER_ID
             }
             env{
               name = "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP"
@@ -44,23 +44,23 @@ resource "kubernetes_deployment" "deployment_kafka_app" {
             }
             env{
               name = "KAFKA_CREATE_TOPICS"
-              value = "trades:1:1"
+              value = var.KAFKA_CREATE_TOPICS
             }
             env{
               name = "KAFKA_LISTENERS"
-              value = "PLAINTEXT://kafkabroker:29092,PLAINTEXT_HOST://0.0.0.0:9092"
+              value = "PLAINTEXT://kafkabroker:${var.KAFKA_ADVERTISED_PORT},PLAINTEXT_HOST://0.0.0.0:${var.KAFKA_EXTERNAL_PORT}"
             }
             env{
               name = "KAFKA_ADVERTISED_LISTENERS"
-              value = "PLAINTEXT://kafkabroker:29092,PLAINTEXT_HOST://localhost:9092"
+              value = "PLAINTEXT://kafkabroker:${var.KAFKA_ADVERTISED_PORT},PLAINTEXT_HOST://localhost:${var.KAFKA_EXTERNAL_PORT}"
             }
-            image = "wurstmeister/kafka"
+            image = var.KAFKA_IMAGE
             name = "kafka"
             port{
-              container_port = 9092
+              container_port = var.KAFKA_EXTERNAL_PORT
             }
             port{
-              container_port = 29092
+              container_port = var.KAFKA_ADVERTISED_PORT
             }
           }
         hostname = "kafkabroker"
@@ -81,9 +81,9 @@ resource "kubernetes_service" "service_kafkabroker" {
   spec{
     port{
         name = "kafka-port-websocket"
-        port = 29092
+        port = var.KAFKA_ADVERTISED_PORT
         protocol = "TCP"
-        target_port = 29092
+        target_port = var.KAFKA_ADVERTISED_PORT
       }
     selector = {
       app = "kafka-app"

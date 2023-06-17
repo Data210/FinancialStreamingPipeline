@@ -40,15 +40,15 @@ resource "kubernetes_deployment" "deployment_spark_master" {
             }
             env{
               name = "SPARK_USER"
-              value = "spark"
+              value = var.SPARK_USER
             }
-            image = "docker.io/bitnami/spark:3.4"
+            image = var.SPARK_IMAGE
             name = "spark-master"
             port{
-                container_port = 7077
+                container_port = var.SPARK_MASTER_INTERNAL_PORT
             }
             port{
-                container_port = 8080
+                container_port = var.SPARK_MASTER_EXTERNAL_PORT
             }
         }
         container{
@@ -58,15 +58,15 @@ resource "kubernetes_deployment" "deployment_spark_master" {
             }
             env{
               name = "SPARK_MASTER_URL"
-              value = "spark://spark-master-service:7077"
+              value = "spark://${var.SPARK_MASTER_HOSTNAME}:${var.SPARK_MASTER_INTERNAL_PORT}"
             }
             env{
               name = "SPARK_WORKER_MEMORY"
-              value = "1G"
+              value = var.SPARK_WORKER_MEMORY
             }
             env{
               name = "SPARK_WORKER_CORES"
-              value = "1"
+              value = var.SPARK_WORKER_CORES
             }
             env{
               name = "SPARK_RPC_AUTHENTICATION_ENABLED"
@@ -86,20 +86,20 @@ resource "kubernetes_deployment" "deployment_spark_master" {
             }
             env{
               name = "SPARK_USER"
-              value = "spark"
+              value = var.SPARK_USER
             }
-            image = "docker.io/bitnami/spark:3.4"
+            image = var.SPARK_IMAGE
             name = "spark-worker"
           }
         container{
             env{
               name = "SPARK_MASTER_HOSTNAME"
-              value = "spark-master-service"
+              value = var.SPARK_MASTER_HOSTNAME
             }
-            image = "ethanjolly/fin_pyspark"
+            image = var.PYSPARK_IMAGE
             name = "pyspark"
             port{
-              container_port = 9192
+              container_port = var.PYSPARK_CLIENT_PORT
             }
         }
       }
@@ -109,24 +109,24 @@ resource "kubernetes_deployment" "deployment_spark_master" {
 
 resource "kubernetes_service" "service_spark_master_service" {
   metadata{
-    name = "spark-master-service"
+    name = var.SPARK_MASTER_HOSTNAME
     namespace = "default"
   }
   spec{
     port{
         name = "master-port"
-        port = 7077
-        target_port = 7077
+        port = var.SPARK_MASTER_INTERNAL_PORT
+        target_port = var.SPARK_MASTER_INTERNAL_PORT
       }
     port{
         name = "pyspark-port"
-        port = 9192
-        target_port = 9192
+        port = var.PYSPARK_CLIENT_PORT
+        target_port = var.PYSPARK_CLIENT_PORT
       }
     port{
         name = "web-ui"
-        port = 8080
-        target_port = 8080
+        port = var.SPARK_MASTER_EXTERNAL_PORT
+        target_port = var.SPARK_MASTER_EXTERNAL_PORT
       }
     selector = {
       app = "spark-master"

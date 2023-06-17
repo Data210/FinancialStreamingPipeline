@@ -37,8 +37,8 @@ resource "kubernetes_service" "service_websocket_entrypoint" {
   }
   spec{
     port{
-        port = 8001
-        target_port = 8001
+        port = var.websocket_port
+        target_port = var.websocket_port
       }
     selector = {
       app = "websocket-test"

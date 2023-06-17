@@ -19,9 +19,9 @@ resource "kubernetes_deployment" "deployment_grafana_app" {
       spec {
         container {
           name  = "grafana-app"
-          image = "ethanjolly/fin_grafana"
+          image = var.GRAFANA_IMAGE
           port {
-            container_port = 3000
+            container_port = var.GRAFANA_PORT
           }
         }
       }
@@ -37,9 +37,9 @@ resource "kubernetes_service" "service_grafana" {
   spec {
     type = "NodePort"
     port {
-      node_port   = 30005
-      port        = 3000
-      target_port = 3000
+      node_port = var.GRAFANA_NODEPORT
+      port = var.GRAFANA_PORT
+      target_port = var.GRAFANA_PORT
     }
     selector = {
       app = "grafana-app"
