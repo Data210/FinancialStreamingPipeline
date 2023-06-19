@@ -11,7 +11,7 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  network    = google_compute_network.vpc.name
+  network = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
 }
 
@@ -38,4 +38,20 @@ resource "google_container_node_pool" "primary_nodes" {
       disable-legacy-endpoints = "true"
     }
   }
+}
+
+resource "google_compute_firewall" "default" {
+  name = "grafana-firewall"
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["30005"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
 }
