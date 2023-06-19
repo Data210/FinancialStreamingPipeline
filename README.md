@@ -55,12 +55,6 @@
 ## About The Project
 
 
-
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-
-https://github.com/Data210/FinancialStreamingPipeline/assets/113981071/b32c2252-6731-472f-bf59-3fab6554949b
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
