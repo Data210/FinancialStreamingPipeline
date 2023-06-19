@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 provider "aws" {
-  region = var.region
+  region = "eu-central-1"
 }
 
 data "terraform_remote_state" "eks" {

@@ -1,3 +1,22 @@
+variable "project_id" {
+  description = "project id"
+}
+
+variable "zone" {
+  description = "zone"
+}
+
+variable "cassandra_disk_size"{
+  type = string
+  default = "1Gi"
+}
+
+variable "kafka_disk_size"{
+  type = string
+  default = "1Gi"
+}
+
+
 variable "finnhub_api_key" {
   type = string
 }
