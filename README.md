@@ -111,8 +111,20 @@ terraform destroy
 ```
 ## GCP Kubernetes Setup using Terraform
 Setting up the project on Cloud services is similar to locally, first for GCP you will need to have created a project on GCP for kubernetes and enabled kubernetes engine. Then locally you need to have set up [GCloud CLI](https://cloud.google.com/sdk/docs/install) with the credentials to your account. After that you can navigate to `terraform/GCP/GKE` and `terraform/GCP/K8s` to create the `terraform.tfvars` files from the templates. With those created now you can deploy with `terraform apply` however it is important that you deploy the GKE cluster **First** as you cannot deploy the pods from `terraform/GCP/K8s` without the cluster being up first.
+<br>
+To access the Grafana dashboard from the GCP cluster you can run:
+```bash
+kubectl get nodes -o wide
+```
+Then you should be able to use the external ip of any of the nodes to access Grafana from `<external-ip>:30005`.
 ## AWS Kubernetes Setup using Terraform
-Setting up the project on AWS is a similar process to setting it up on GCP, where first you need to install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and set it up with the credentials to your account. With that you can navigate to `terraform/AWS/
+Setting up the project on AWS is a similar process to setting it up on GCP, where first you need to install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and set it up with the credentials to your account. With that you can first navigate to `terraform/AWS/EKS` and run `terraform apply` in order to ensure the kubernetes cluster is up and running first. Then go to `terraform/AWS/K8s` and create the `terraform.tfvars` from the template, then run `terraform apply` to create the pods.
+<br>
+To access the Grafana dashboard from the AWS cluster you can run:
+```bash
+kubectl get services -o wide
+```
+To get the external ip of the Grafana service, which you then should be able to access from `<external-ip>:3000`.
 
 <!-- LICENSE -->
 # License
