@@ -1,0 +1,45 @@
+
+### FINNHUB ###
+finnhub_api_key=""
+
+### ZOOKEEPER ###
+ZOOKEEPER_IMAGE = "digitalwonderland/zookeeper"
+ZOOKEEPER_CLIENT_PORT = 2181
+ZOOKEEPER_TICK_TIME = 2000
+ZOOKEEPER_SERVER_1 = "zookeeper"
+
+### KAFKA ###
+KAFKA_IMAGE = "wurstmeister/kafka"
+KAFKA_ADVERTISED_PORT = 29092
+KAFKA_EXTERNAL_PORT = 9092
+KAFKA_CREATE_TOPICS = "trades:1:1"
+KAFKA_BROKER_ID = 1
+
+### WEBSOCKET ###
+websocket_port = 8001
+
+### CASSANDRA ###
+CASSANDRA_IMAGE = "ethanjolly/fin_cassandra"
+CASSANDRA_PORT = 9042
+
+### GRAFANA ###
+GRAFANA_IMAGE = "ethanjolly/fin_grafana"
+GRAFANA_PORT = 3000
+GRAFANA_NODEPORT = 30005
+
+### SPARK GLOBAL ###
+SPARK_IMAGE = "docker.io/bitnami/spark:3.4"
+SPARK_USER = "spark"
+
+### SPARK MASTER ###
+SPARK_MASTER_EXTERNAL_PORT = 8080
+SPARK_MASTER_INTERNAL_PORT = 7077
+SPARK_MASTER_HOSTNAME = "spark-master-service"
+
+### PYSPARK ###
+PYSPARK_IMAGE = "ethanjolly/fin_pyspark"
+PYSPARK_CLIENT_PORT = 9192
+
+### SPARK WORKER ###
+SPARK_WORKER_CORES = 1
+SPARK_WORKER_MEMORY = "1G"
