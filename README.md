@@ -80,7 +80,7 @@ This project makes use of the Finnhub.io websocket API as a source of live stock
 # Getting Started
 For all of the following setup versions a [Finnhub](https://finnhub.io/) API key is required, you can get one by signing up to their website.
 ## Local Docker Setup
-To setup locally you first need to create your `.env` from the `template.env` filling in the missing details.
+To set up locally you first need to create your `.env` from the `template.env` filling in the missing details.
 Then, provided the Docker Daemon is running, you can navigate to the `/compose` directory, run `git clone https://github.com/apache/superset.git` in order to get the files needed to run Apache Superset. Then you can run `./run_docker.sh`. This will run the following commands:
 ```bash
 docker compose down --remove-orphans # To bring down any containers that might be running.
@@ -88,10 +88,31 @@ docker compose build # To build the images.
 docker compose up -d # To build the containers.
 ```
 This should create the cluster of containers, with the visualisations available from `localhost:3000` for Grafana and `localhost:8088` for Superset.
-## Local Kubernetes Setup
-## GCP Kubernetes Setup
-## AWS Kubernetes Setup
-
+## Local Kubernetes Setup using Kubernetes YML
+To set up locally we developed using [Minikube](https://minikube.sigs.k8s.io/docs/start/) as a Kubernetes node cluster, so having that installed would be necessary first. Then [Kubectl](https://kubernetes.io/docs/tasks/tools/) is also required to be able to create the pods on the nodes. Once those prequisities are installed you can navigate to the `/k8s` directory and run `./run_k8s.sh`. This will run the following commands:
+```bash
+kubectl apply -f cassandra.yaml
+kubectl apply -f zookeeper.yaml
+kubectl apply -f kafka.yaml
+kubectl apply -f websocket.yaml
+kubectl apply -f spark_master.yaml
+kubectl apply -f grafana.yaml
+kubectl get pods -o wide # To see the state of the pods after creation
+```
+which should create the pods on the node cluster.
+## Local Kubernetes Setup using Terraform
+We also set up the local Kubernetes deployments and services to be able to be provisioned through [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli), which will be required to be installed for this set up. With Terraform installed as well as Minikube running you can navigate to `/terraform/local/`, in here you will have to create a `terraform.tfvars` file using the template provided, filling in the gaps of the variables. Once that is done all you need to do is run:
+```bash
+terraform apply
+```
+To create the kubernetes pods, and when you want to bring them all down again you run:
+```bash
+terraform destroy
+```
+## GCP Kubernetes Setup using Terraform
+Setting up the project on Cloud services is similar to locally, first for GCP you will need to have created a project on GCP for kubernetes and enabled kubernetes engine. Then locally you need to have set up [GCloud CLI](https://cloud.google.com/sdk/docs/install) with the credentials to your account. After that you can navigate to `terraform/GCP/GKE` and `terraform/GCP/K8s` to create the `terraform.tfvars` files from the templates. With those created now you can deploy with `terraform apply` however it is important that you deploy the GKE cluster **First** as you cannot deploy the pods from `terraform/GCP/K8s` without the cluster being up first.
+## AWS Kubernetes Setup using Terraform
+Setting up the project on AWS is a similar process to setting it up on GCP, where first you need to install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and set it up with the credentials to your account. With that you can navigate to `terraform/AWS/
 
 <!-- LICENSE -->
 # License
