@@ -52,7 +52,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+# About The Project
 
 This project makes use of the Finnhub.io websocket API as a source of live stock and crypto data. A distributed pipeline was built on top of the API to process, store and visualize real-time trade data on a web dashboard, in a manner that can be easily scaled up and deployed on the major cloud providers through Kubernetes or locally in Docker containers. The project makes use of Apache kafka for the messaging layer, Apache Spark for processing, Cassandra as the database solution, and Grafana or Apache Superset on top of Presto to connect to the databse and create dashboards.
 
@@ -74,14 +74,27 @@ This project makes use of the Finnhub.io websocket API as a source of live stock
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## System Diagram
+# System Diagram
 <img src="static/img/system_diagram.png" alt="Logo" width="100%" style="border-radius:25px" >
 
-
+# Getting Started
+For all of the following setup versions a [Finnhub](https://finnhub.io/) API key is required, you can get one by signing up to their website.
+## Local Docker Setup
+To setup locally you first need to create your `.env` from the `template.env` filling in the missing details.
+Then, provided the Docker Daemon is running, you can navigate to the `/compose` directory, run `git clone https://github.com/apache/superset.git` in order to get the files needed to run Apache Superset. Then you can run `./run_docker.sh`. This will run the following commands:
+```bash
+docker compose down --remove-orphans # To bring down any containers that might be running.
+docker compose build # To build the images.
+docker compose up -d # To build the containers.
+```
+This should create the cluster of containers, with the visualisations available from `localhost:3000` for Grafana and `localhost:8088` for Superset.
+## Local Kubernetes Setup
+## GCP Kubernetes Setup
+## AWS Kubernetes Setup
 
 
 <!-- LICENSE -->
-## License
+# License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
@@ -90,7 +103,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 
 <!-- CONTACT -->
-## Contact
+# Contact
 
 [![Linkedin][linkedin-shield-andre]](https://www.linkedin.com/in/andre-m-r/)
 [![LinkedIn][linkedin-shield-ethan]](https://www.linkedin.com/in/ethan-jolly/)
@@ -100,7 +113,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+# Acknowledgments
 
 * [RSKriegs](https://github.com/RSKriegs/finnhub-streaming-data-pipeline) for inspiration on the system architecture.
 
