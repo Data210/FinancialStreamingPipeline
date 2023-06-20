@@ -1,14 +1,16 @@
-variable "project_id" {
-  description = "project id"
-}
-
-variable "zone" {
-  description = "zone"
+variable "cassandra_google_compute_disk_size"{
+  type = number
+  default = 1
 }
 
 variable "cassandra_disk_size"{
   type = string
   default = "1Gi"
+}
+
+variable "kafka_google_compute_disk_size"{
+  type = number
+  default = 1
 }
 
 variable "kafka_disk_size"{

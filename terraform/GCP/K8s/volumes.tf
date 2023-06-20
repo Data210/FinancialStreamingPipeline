@@ -1,18 +1,18 @@
 resource "google_compute_disk" "cassandra-disk" {
-  name = "cassandra-${var.project_id}"
+  name = "cassandra-${data.terraform_remote_state.k8_cluster.outputs.project_id}"
   type = "pd-standard"
-  zone = var.zone
-  size = 1
+  zone = data.terraform_remote_state.k8_cluster.outputs.zone
+  size = var.cassandra_google_compute_disk_size
   labels = {
     environment = "dev"
   }
-  project = var.project_id
+  project = data.terraform_remote_state.k8_cluster.outputs.project_id
 }
 
 
 resource "kubernetes_persistent_volume" "cassandra-db-volume" {
   metadata {
-    name = "cassandra-${var.project_id}"
+    name = "cassandra-${data.terraform_remote_state.k8_cluster.outputs.project_id}"
   }
   spec {
     access_modes = ["ReadWriteOnce"]
@@ -31,7 +31,7 @@ resource "kubernetes_persistent_volume" "cassandra-db-volume" {
 
 resource "kubernetes_persistent_volume_claim" "cassandra-db-volume-claim" {
   metadata {
-    name = "cassandra-${var.project_id}"
+    name = "cassandra-${data.terraform_remote_state.k8_cluster.outputs.project_id}"
   }
   spec {
     access_modes = ["ReadWriteOnce"]
@@ -46,20 +46,20 @@ resource "kubernetes_persistent_volume_claim" "cassandra-db-volume-claim" {
 }
 
 resource "google_compute_disk" "kafka-disk" {
-  name = "kafka-${var.project_id}"
+  name = "kafka-${data.terraform_remote_state.k8_cluster.outputs.project_id}"
   type = "pd-standard"
-  zone = var.zone
-  size = 1
+  zone = data.terraform_remote_state.k8_cluster.outputs.zone
+  size = var.kafka_google_compute_disk_size
   labels = {
     environment = "dev"
   }
-  project = var.project_id
+  project = data.terraform_remote_state.k8_cluster.outputs.project_id
 }
 
 
 resource "kubernetes_persistent_volume" "kafka-db-volume" {
   metadata {
-    name = "kafka-${var.project_id}"
+    name = "kafka-${data.terraform_remote_state.k8_cluster.outputs.project_id}"
   }
   spec {
     access_modes = ["ReadWriteOnce"]
@@ -78,7 +78,7 @@ resource "kubernetes_persistent_volume" "kafka-db-volume" {
 
 resource "kubernetes_persistent_volume_claim" "kafka-db-volume-claim" {
   metadata {
-    name = "kafka-${var.project_id}"
+    name = "kafka-${data.terraform_remote_state.k8_cluster.outputs.project_id}"
   }
   spec {
     access_modes = ["ReadWriteOnce"]

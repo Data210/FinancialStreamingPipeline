@@ -12,13 +12,13 @@
 <br />
 <div align="center">
   <a href="https://github.com/Data210/FinancialStreamingPipeline">
-    <img src="static/img/Airplane_silhouette.svg" alt="Logo" width="160" height="160">
+    <img src="static/img/stock.png" alt="Logo" width="160" height="160">
   </a>
 
-<h3 align="center">OpenSky Visualisation</h3>
+<h3 align="center">Financial streaming pipeline</h3>
 
   <p align="center">
-    Live aircraft tracker and analysis
+    Distributed scalable solution for streaming Finnhub data
     <br />
     <a href="https://github.com/Data210/FinancialStreamingPipeline"><strong>Explore the docs »</strong></a>
     <br />
@@ -54,10 +54,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+This project makes use of the Finnhub.io websocket API as a source of live stock and crypto data. A distributed pipeline was built on top of the API to process, store and visualize real-time trade data on a web dashboard, in a manner that can be easily scaled up and deployed on the major cloud providers through Kubernetes or locally in Docker containers. The project makes use of Apache kafka for the messaging layer, Apache Spark for processing, Cassandra as the database solution, and Grafana or Apache Superset on top of Presto to connect to the databse and create dashboards.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 ![Python][Python]
@@ -68,6 +67,10 @@
 ![Apache Kafka][Apache Kafka]
 ![Apache Spark][Apache Spark]
 ![ApacheCassandra][ApacheCassandra]
+![Grafana][Grafana]
+![Presto][Presto]
+![Apache Superset][Apache Superset]
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -89,7 +92,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Linkedin: [![Linkedin][linkedin-shield-andre]](https://www.linkedin.com/in/andre-m-r/)
+[![Linkedin][linkedin-shield-andre]](https://www.linkedin.com/in/andre-m-r/)
 [![LinkedIn][linkedin-shield-ethan]](https://www.linkedin.com/in/ethan-jolly/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -125,7 +128,10 @@ Linkedin: [![Linkedin][linkedin-shield-andre]](https://www.linkedin.com/in/andre
 [AWS]: 	https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white
 [aws-url]: https://aws.amazon.com/
 [Docker]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
-[Kubernetes]: https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white!
+[Kubernetes]: https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white
 [Apache Kafka]:https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka
 [Apache Spark]:https://img.shields.io/badge/Apache%20Spark-FDEE21?style=for-the-badge&logo=apachespark&logoColor=black
 [ApacheCassandra]: https://img.shields.io/badge/cassandra-%231287B1.svg?style=for-the-badge&logo=apache-cassandra&logoColor=white
+[Grafana]: https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white
+[Apache Superset]:https://img.shields.io/badge/Apache%20Superset-blue?style=for-the-badge&logo=apache
+[Presto]:https://img.shields.io/badge/Presto-%235890FF?style=for-the-badge&logo=presto&logoColor=white
