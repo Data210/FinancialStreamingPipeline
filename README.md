@@ -64,6 +64,7 @@ This project makes use of the Finnhub.io websocket API as a source of live stock
 [![AWS][AWS]][aws-url]
 ![Docker][Docker]
 ![Kubernetes][Kubernetes]
+![Terraform][Terraform]
 ![Apache Kafka][Apache Kafka]
 ![Apache Spark][Apache Spark]
 ![ApacheCassandra][ApacheCassandra]
@@ -181,3 +182,4 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [Grafana]: https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white
 [Apache Superset]:https://img.shields.io/badge/Apache%20Superset-blue?style=for-the-badge&logo=apache
 [Presto]:https://img.shields.io/badge/Presto-%235890FF?style=for-the-badge&logo=presto&logoColor=white
+[Terraform]:https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white
