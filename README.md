@@ -54,7 +54,7 @@
 <!-- ABOUT THE PROJECT -->
 # About The Project
 
-This project makes use of the Finnhub.io websocket API as a source of live stock and crypto data. A distributed pipeline was built on top of the API to process, store and visualize real-time trade data on a web dashboard, in a manner that can be easily scaled up and deployed on the major cloud providers through Kubernetes or locally in Docker containers. The project makes use of Apache kafka for the messaging layer, Apache Spark for processing, Cassandra as the database solution, and Grafana or Apache Superset on top of Presto to connect to the databse and create dashboards.
+This project makes use of the Finnhub.io websocket API as a source of live stock and crypto data. A distributed pipeline was built on top of the API to process, store and visualize real-time trade data on a web dashboard, in a manner that can be easily scaled up and deployed on the major cloud providers through Kubernetes or locally in Docker containers with Terraform to manage the whole infrastructure. The project makes use of Apache Kafka for the messaging layer, Apache Spark for processing, Cassandra as the database solution, and Grafana or Apache Superset on top of Presto to connect to the database and create dashboards.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
